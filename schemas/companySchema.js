@@ -9,11 +9,13 @@ const schema = new mongoose.Schema({
     Username: {
         type: String,
         required: true,
+        unique: true,
         default: null
     },
     Email: {
         type: String,
         required: true,
+        unique: true,
         default: null
     },
     Password: {
@@ -21,14 +23,21 @@ const schema = new mongoose.Schema({
         required: true,
         default: null
     },
+    PasswordEncode: {
+        type: String,
+        required: true,
+        default: null
+    },
     GST: {
         type: String,
         required: false,
+        unique: true,
         default: null
     },
     PAN: {
         type: String,
         required: false,
+        unique: true,
         default: null
     },
     Logo: {

@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/ShivamVishWD/DMS_API#readme",
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
@@ -33,6 +34,7 @@
     "node-cron": "^3.0.2",
     "nodemailer": "^6.9.3",
     "nodemon": "^2.0.22",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "sha-1": "^1.0.0"
   }
 }

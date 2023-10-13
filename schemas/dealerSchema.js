@@ -9,14 +9,21 @@ const schema = new mongoose.Schema({
     Username: {
         type: String,
         required: true,
+        unique: true,
         default: null
     },
     Email: {
         type: String,
         required: true,
+        unique: true,
         default: null
     },
     Password: {
+        type: String,
+        required: true,
+        default: null
+    },
+    HashPassword: {
         type: String,
         required: true,
         default: null
@@ -58,6 +65,11 @@ const schema = new mongoose.Schema({
         default: null
     },
     pinCode: {
+        type: String,
+        required: false,
+        default: null
+    },
+    profilePhoto: {
         type: String,
         required: false,
         default: null

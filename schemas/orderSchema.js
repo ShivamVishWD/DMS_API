@@ -35,6 +35,24 @@ const schema = new mongoose.Schema({
         enum: ['Ordered', 'Shipping', 'Shipped', 'Out of Delivery', 'Delivered'],
         default: 'Ordered',
     },
+    orderItems: [{
+        productId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'product',
+            required: true,
+            default: null
+        },
+        totalPrice: {
+            type: Number,
+            required: true,
+            default: 0
+        },
+        totalQuantity: {
+            type: Number,
+            required: true,
+            default: 0
+        },
+    }],
     isActive: {
         type: Boolean,
         required: true,

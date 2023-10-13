@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const schema = new mongoose.Schema({
-    Name: {
+    name: {
         type: String,
         required: true,
         default: null
@@ -46,6 +46,11 @@ const schema = new mongoose.Schema({
         required: false,
         default: []
     },
+    productStock: {
+        type: Number,
+        required: false,
+        default: 10
+    },
     companyId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'company',
@@ -56,7 +61,7 @@ const schema = new mongoose.Schema({
         type: String,
         required: true,
         enum: ['In Stock', 'Out Of Stock', 'Few Remains'],
-        default: 'In Stocks',
+        default: 'In Stock',
     },
     isActive: {
         type: Boolean,
