@@ -23,11 +23,21 @@ const schema = new mongoose.Schema({
         required: true,
         default: null
     },
+    company: {
+        type: Object,
+        required: true,
+        default: {}
+    },
     dealerId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'dealer',
         required: true,
         default: null
+    },
+    dealer: {
+        type: Object,
+        required: true,
+        default: {}
     },
     status: {
         type: String,

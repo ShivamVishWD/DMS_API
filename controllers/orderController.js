@@ -1,7 +1,7 @@
 const orderModel = require('../models/orderModel')
 const dealerModel = require('../models/dealerModel')
 const companyModel = require('../models/companyModel')
-const jwtToken = require('../middlewares/JWT')
+const helper = require('../helpers/commonHelper')
 const { ErrorHandle } = require('../helpers/ErrorHandler')
 
 const companyController = {
@@ -38,18 +38,47 @@ const companyController = {
                 body['isCouponApplied'] = true
             }
 
-            if(req.authData.data.dealerId)
+            let dealerObj = {}, companyObj = {}
+            if(req.authData.data.dealerId){
+                const dealer = await dealerModel.find({_id: req.authData.data.dealerId})
+                if(dealer.status == 200){
+                    dealerObj = {
+                        Name: dealer.data[0].Name,
+                        Username: dealer.data[0].Username,
+                        Address: helper.checkNull(dealer.data[0].addressLine1) + helper.checkNull(dealer.data[0].addressLine2) + helper.checkNull(dealer.data[0].district) + helper.checkNull(dealer.data[0].state) + helper.checkNull(dealer.data[0].pinCode)
+                    }
+
+
+                }
+                body['dealer'] = dealerObj
                 body['dealerId'] = req.authData.data.dealerId
-            if(req.authData.data.companyId)
+            }
+            if(req.authData.data.companyId){
+                const company = await companyModel.findOneRecord({_id: req.authData.data.companyId})
+                if(company.status == 200){
+                    companyObj = {
+                        Name: company.data.Name,
+                        Username: company.data.Username
+                    }
+                }
+                body['company'] = companyObj
                 body['companyId'] = req.authData.data.companyId
+            }
 
             body['orderItems'] = req.body
 
+            let totalAmount = 0
             for(let item of body.orderItems){
+                totalAmount += item.totalPrice;
                 delete item.productPrice
             }
-
+            body['orderAmount'] = totalAmount
             
+            const result = await orderModel.save(body)
+            if(result.status == 200)
+                return res.status(200).json({status: 200, message: 'Order Created', reordId: result.recordId})
+            else
+                return res.status(400).json({status: 400, message: 'Order Creatrion Failed'})
         }catch(error){
             return res.json(ErrorHandle(error))
         }
@@ -57,8 +86,14 @@ const companyController = {
 
     get : async(req, res, next) => {
         try{
+            if(!req.authData || !req.authData.data || !(req.authData.data.dealerId || req.authData.data.companyId))
+                return res.status(400).json({status: 400, message: 'Invalid Auth Token'})
             let filter = {}
-            const records = await productModel.find(filter)
+            if(req.authData.dealerId)
+                filter['dealerId'] = req.authData.dealerId
+            if(req.authData.companyId)
+                filter['companyId'] = req.authData.companyId
+            const records = await orderModel.find(filter)
             return res.status(records.status).json(records)
         }catch(error){
             return res.json(ErrorHandle(error))
