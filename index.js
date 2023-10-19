@@ -5,6 +5,8 @@ const cors = require('cors')
 const session = require('express-session')
 const path = require('path')
 require('./configs/mongooseConfig');
+const orderController = require('./controllers/orderController')
+const Emitter = require('events');
 
 app.use(cors())
 
@@ -23,9 +25,9 @@ app.use(session({
     resave : true,
     saveUninitialized : true
 }))
-
+const eventEmitter = new Emitter();
 app.use(express.json())
-
+app.set('eventEmitter', eventEmitter)
 app.use(express.urlencoded({extended: false}))
 
 app.get('/', (req, res) =>{
@@ -36,6 +38,10 @@ app.use('/api', require('./routes/routes'));
 
 const APP_PORT = process.env.PORT || 3000
 
+eventEmitter.on('start', (data)=>{
+    console.log('index emit : ',data)
+    orderController.myfun(data)
+})
 app.listen(APP_PORT, ()=>{
     console.log(`Server started at => ${APP_PORT}`)
 })

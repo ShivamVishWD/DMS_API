@@ -1,12 +1,5 @@
-const productModel = require('../models/productModel')
+const serviceRequestModel = require('../models/serviceRequestModel')
 const { ErrorHandle } = require('../helpers/ErrorHandler')
-
-// Object for Match the fields from request body and replace it in actual Field Name
-const FieldsName = {
-    brand: 'productBrand',
-    category: 'productCateg',
-    subcategory: 'productSubCateg'
-}
 
 const companyController = {
     
@@ -15,38 +8,28 @@ const companyController = {
             if(!req.authData || !req.authData.data || !req.authData.data.companyId)
                 return res.status(400).json({status: 400, message: 'Invalid Auth Token'})
 
-            if(!req.body)
-                return res.status(200).json({status: 400, message: 'Request Body should not blank'})
-
             let body = {}, mandatoryFields = []
 
-            if(!req,body.name)
-                mandatoryFields.push("name")
+            if(!req.body.subject)
+                mandatoryFields.push("subject")
 
-            if(!req.body.price)
-                mandatoryFields.push("price")
+            if(!req.body.description)
+                mandatoryFields.push("description")
+
+            if(!req.body.type)
+                mandatoryFields.push("type")
 
             if(mandatoryFields.length > 0)
-                return res.status(200).json({status: 200, message: 'Mandatory fields', fields: mandatoryFields})
+                return res.status(200).json({status: 200, message: 'Fields are Mandatory', fields: mandatoryFields})
 
             body = req.body
 
-            if('brand' in body)
-                body[FieldsName['brand']] = body.brand
+            if(req.authData.data.dealerId)
+                body['dealerId'] = req.authData.data.dealerId
+            if(req.authData.data.companyId)
+                body['companyId'] = req.authData.data.companyId
 
-            if('category' in body)
-                body[FieldsName['category']] = body.category
-
-            if('subcategory' in body)
-                body[FieldsName['subcategory']] = body.subcategory
-
-            delete body.brand
-            delete body.category
-            delete body.subcategory
-
-            body['companyId'] = req.authData.data.companyId
-
-            let result = await productModel.save(body);
+            let result = await serviceRequestModel.save(req.body)
             if(result.status == 200)
                 return res.status(200).json({status: 200, message: 'Record Saved', recordId: result.recordId})
             else
@@ -61,10 +44,14 @@ const companyController = {
             if(!req.authData || !req.authData.data || !req.authData.data.companyId){
                 return res.status(400).json({status: 400, message: 'Invalid Auth Token'})
             }
-            let filter = {
-                companyId: req.authData.data.companyId
-            }
-            const records = await productModel.find(filter)
+            let filter = {}
+
+            if(req.authData.data.dealerId)
+                filter['dealerId'] = req.authData.data.dealerId
+            if(req.authData.data.companyId)
+                filter['companyId'] = req.authData.data.companyId
+
+            const records = await serviceRequestModel.find(filter)
             return res.status(records.status).json(records)
         }catch(error){
             return res.json(ErrorHandle(error))

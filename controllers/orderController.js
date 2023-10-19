@@ -3,6 +3,9 @@ const dealerModel = require('../models/dealerModel')
 const companyModel = require('../models/companyModel')
 const helper = require('../helpers/commonHelper')
 const { ErrorHandle } = require('../helpers/ErrorHandler')
+//const EventEmitter = require('events');
+
+//const eventEmitter = new EventEmitter();
 
 const companyController = {
     
@@ -47,8 +50,6 @@ const companyController = {
                         Username: dealer.data[0].Username,
                         Address: helper.checkNull(dealer.data[0].addressLine1) + helper.checkNull(dealer.data[0].addressLine2) + helper.checkNull(dealer.data[0].district) + helper.checkNull(dealer.data[0].state) + helper.checkNull(dealer.data[0].pinCode)
                     }
-
-
                 }
                 body['dealer'] = dealerObj
                 body['dealerId'] = req.authData.data.dealerId
@@ -73,7 +74,7 @@ const companyController = {
                 delete item.productPrice
             }
             body['orderAmount'] = totalAmount
-            
+
             const result = await orderModel.save(body)
             if(result.status == 200)
                 return res.status(200).json({status: 200, message: 'Order Created', reordId: result.recordId})
@@ -86,9 +87,12 @@ const companyController = {
 
     get : async(req, res, next) => {
         try{
+            const eventEmitter = req.app.get('eventEmitter')
+            eventEmitter.emit('start', 'hello');
             if(!req.authData || !req.authData.data || !(req.authData.data.dealerId || req.authData.data.companyId))
                 return res.status(400).json({status: 400, message: 'Invalid Auth Token'})
             let filter = {}
+            
             if(req.authData.dealerId)
                 filter['dealerId'] = req.authData.dealerId
             if(req.authData.companyId)
@@ -114,6 +118,10 @@ const companyController = {
         }catch(error){
             return res.json(ErrorHandle(error))
         }
+    },
+
+    myfun : (data) => {
+        console.log('myfun emit : ',data)
     }
 
 }

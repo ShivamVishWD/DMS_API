@@ -13,23 +13,23 @@ const schema = new mongoose.Schema({
         required: true,
         default: null
     },
-    requestType: {
+    type: {
         type: String,
         required: true,
         enum: ['Payment', 'Order', 'Product', 'Offer'],
         default: null
     },
-    requestTitle: {
+    subject: {
         type: String,
         required: true,
         default: null
     },
-    requestDescription: {
+    description: {
         type: String,
         required: false,
         default: null
     },
-    requestImage: {
+    image: {
         type: String,
         required: false,
         default: null

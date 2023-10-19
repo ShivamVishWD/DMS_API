@@ -9,6 +9,7 @@ router.use('/product', jwtToken.verify, require('./productRoutes'))
 
 router.use('/order', jwtToken.verify, require('./orderRoutes'))
 
+router.use('/servicerequest', jwtToken.verify, require('./serviceRequestRoutes'))
 router.get('*', (req, res)=>{
     return res.status(400).json({status: 400, message: 'No API Fond'});
 })
